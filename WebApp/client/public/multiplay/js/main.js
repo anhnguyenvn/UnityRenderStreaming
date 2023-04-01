@@ -73,7 +73,8 @@ function showPlayButton() {
 
 function onClickPlayButton() {
   playButton.style.display = 'none';
-
+  console.log("CLICPLAYYYYYY");
+  
   // add video player
   videoPlayer.createPlayer(playerDiv, lockMouseCheck);
   setupRenderStreaming();
@@ -81,13 +82,19 @@ function onClickPlayButton() {
 
 async function setupRenderStreaming() {
   codecPreferences.disabled = true;
-
+  console.log("SETUPP RENDER STREAM");
   const signaling = useWebSocket ? new WebSocketSignaling() : new Signaling();
   const config = getRTCConfiguration();
   renderstreaming = new RenderStreaming(signaling, config);
   renderstreaming.onConnect = onConnect;
   renderstreaming.onDisconnect = onDisconnect;
-  renderstreaming.onTrackEvent = (data) => videoPlayer.addTrack(data.track);
+  renderstreaming.onTrackEvent = (data) => {
+    console.log("** TRACK ");
+    console.log(data.track.id);
+    console.log(data.track.label);
+    console.log(data.track.kind);
+    videoPlayer.addTrack(data.track);
+  }
   renderstreaming.onGotOffer = setCodecPreferences;
 
   await renderstreaming.start();

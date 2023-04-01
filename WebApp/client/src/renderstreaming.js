@@ -19,7 +19,10 @@ export class RenderStreaming {
     this.onConnect = function (connectionId) { Logger.log(`Connect peer on ${connectionId}.`); };
     this.onDisconnect = function (connectionId) { Logger.log(`Disconnect peer on ${connectionId}.`); };
     this.onGotOffer = function (connectionId) { Logger.log(`On got Offer on ${connectionId}.`); };
-    this.onGotAnswer = function (connectionId) { Logger.log(`On got Answer on ${connectionId}.`); };
+    this.onGotAnswer = function (connectionId) {
+      
+      console.log("**** onGotAnswer from remote");
+      console.log(`On got Answer on ${connectionId}.`); };
     this.onTrackEvent = function (data) { Logger.log(`OnTrack event peer with data:${data}`); };
     this.onAddChannel = function (data) { Logger.log(`onAddChannel event peer with data:${data}`); };
 
@@ -42,6 +45,9 @@ export class RenderStreaming {
 
   async _onDisconnect(e) {
     const data = e.detail;
+    console.log(e.detail);
+    Logger.warn("DISSCONNTED");
+    Logger.warn(e);
     if (this._connectionId == data.connectionId) {
       this.onDisconnect(data.connectionId);
       if (this._peer) {
@@ -67,6 +73,7 @@ export class RenderStreaming {
 
   async _onAnswer(e) {
     const answer = e.detail;
+    console.log("#### SET ANSSER");
     const desc = new RTCSessionDescription({ sdp: answer.sdp, type: "answer" });
     if (this._peer) {
       try {
@@ -91,6 +98,7 @@ export class RenderStreaming {
    * @param {string | null} connectionId
    */
   async createConnection(connectionId) {
+    console.log("Create Connection");
     this._connectionId = connectionId ? connectionId : uuid4();
     await this._signaling.createConnection(this._connectionId);
   }

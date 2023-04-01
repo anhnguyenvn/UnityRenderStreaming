@@ -50,7 +50,7 @@ export class Signaling extends EventTarget {
   }
 
   async loopGetAll() {
-    let lastTimeRequest = Date.now() - 30000;
+    let lastTimeRequest = Date.now() - 10000;
     while (this.running) {
       const res = await this.getAll(lastTimeRequest);
       lastTimeRequest = Date.parse(res.headers.get('Date'));
@@ -106,7 +106,7 @@ export class Signaling extends EventTarget {
   }
 
   async loopGetOffer() {
-    let lastTimeRequest = Date.now() - 30000;
+    let lastTimeRequest = Date.now() - 10000;
 
     while (this.running) {
       const res = await this.getOffer(lastTimeRequest);
@@ -126,7 +126,7 @@ export class Signaling extends EventTarget {
 
   async loopGetAnswer() {
     // receive answer message from 30secs ago
-    let lastTimeRequest = Date.now() - 30000;
+    let lastTimeRequest = Date.now() - 10000;
 
     while (this.running) {
       const res = await this.getAnswer(lastTimeRequest);
@@ -146,7 +146,7 @@ export class Signaling extends EventTarget {
 
   async loopGetCandidate() {
     // receive answer message from 30secs ago
-    let lastTimeRequest = Date.now() - 30000;
+    let lastTimeRequest = Date.now() - 10000;
 
     while (this.running) {
       const res = await this.getCandidate(lastTimeRequest);
@@ -241,22 +241,26 @@ export class WebSocketSignaling extends EventTarget {
   constructor() {
     super();
     this.sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-
+    Logger.log("ONNNOPENDDDD 1");
+    console.log("asdfasdfasdf");
     let websocketUrl;
     if (location.protocol === "https:") {
       websocketUrl = "wss://" + location.host;
     } else {
       websocketUrl = "ws://" + location.host;
     }
-
+    console.log("ONNNOPENDDDD 2" + websocketUrl);
     this.websocket = new WebSocket(websocketUrl);
     this.connectionId = null;
-
+    console.log("ONNNOPENDDDD 3");
     this.websocket.onopen = () => {
+      console.log("ONNNOPENDDDD");
       this.isWsOpen = true;
     };
 
-    this.websocket.onclose = () => {
+    this.websocket.onclose = (event) => {
+      console.log("ONNCLOSE");
+    
       this.isWsOpen = false;
     };
 
@@ -267,6 +271,7 @@ export class WebSocketSignaling extends EventTarget {
       }
 
       Logger.log(msg);
+      console.log(msg);
 
       switch (msg.type) {
         case "connect":
@@ -274,6 +279,7 @@ export class WebSocketSignaling extends EventTarget {
           break;
         case "disconnect":
           this.dispatchEvent(new CustomEvent('disconnect', { detail: msg }));
+          console.log("** DISCONECT WWITH DETAIL " + msg);
           break;
         case "offer":
           this.dispatchEvent(new CustomEvent('offer', { detail: { connectionId: msg.from, sdp: msg.data.sdp, polite: msg.data.polite } }));
